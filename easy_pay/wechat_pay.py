@@ -24,7 +24,7 @@ class WechatBase:
     app_secret: str
     private_key: str
     mch_id: str
-    serial_no: str
+    serial_no: str  # 商户 api 证书
 
     nonce_str: str = ''
     timestamp: str = ''
@@ -79,6 +79,19 @@ class WechatBase:
 
     def __hash__(self):
         return hash(time.time())
+
+    def get_cert(self):
+        """平台证书序列号"""
+        url = "https://api.mch.weixin.qq.com/v3/certificates"
+        cert = self.request('GET', url)
+        return cert.json()['data'][0]['serial_no']
+
+    def validate_sign(self, serial_no: str):
+        """
+        :param serial_no: Wechatpay-Serial 商户平台证书序列号
+        """
+        local_cert = self.get_cert()
+        return True if local_cert == serial_no else False
 
 
 @dataclass
