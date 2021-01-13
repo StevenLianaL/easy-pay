@@ -18,7 +18,7 @@ setuptools.setup(
     description="Easier integration with WeChat pay and Alipay.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="git@github.com:StevenLianaL/easy-pay.git",
+    url="https://github.com/StevenLianaL/easy-pay",
     packages=setuptools.find_packages(),
     install_requires=requires,
     classifiers=[
