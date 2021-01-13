@@ -46,7 +46,7 @@ def test_pc_native():
 
 def test_generate_qr_code():
     trade_order = secrets.token_hex(16)
-    p = Path(f"{now.int_timestamp}.png")
+    p = Path('test', f"{now.int_timestamp}.png")
     w.build_native_qr_code(
         description="中文 body", trade_no=trade_order, notice_url='https://www.baidu.com',
         price=1, path=p

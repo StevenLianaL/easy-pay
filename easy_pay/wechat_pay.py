@@ -82,7 +82,8 @@ class WechatBase:
 
 
 @dataclass
-class WechatTool(WechatBase):
+class WechatPublic(WechatBase):
+    """公众号平台工具"""
 
     @staticmethod
     def generate_wx_sign(d: dict, key: str) -> str:
@@ -124,7 +125,9 @@ class WechatTool(WechatBase):
 
 
 @dataclass
-class WechatPay(WechatTool):
+class WechatPay(WechatPublic):
+    """支付平台工具"""
+
     def build_native_qr_code(
             self, description: str, trade_no: str, notice_url: str, price: int, path: Path
     ):
