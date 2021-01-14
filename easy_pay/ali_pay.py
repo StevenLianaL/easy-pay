@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pendulum
 from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
-from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
+from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient, verify_with_rsa
 from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
 from alipay.aop.api.domain.AlipayTradeWapPayModel import AlipayTradeWapPayModel
 from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
@@ -96,3 +96,16 @@ class Alipay:
 
         response = self.client.page_execute(request, http_method="GET")
         return response
+
+    def validate_sign(self, form: dict):
+        """
+        :param form: alipay notice form
+        """
+        notice = []
+        sign = form.get('sign')
+        for k, v in form.items():
+            if k not in ('sign', 'sign_type') and v:
+                notice.append(f"{k}={v}")
+        notice_message = '&'.join(sorted(notice))
+        is_passed = verify_with_rsa(self.alipay_public_key, notice_message.encode('utf8'), sign)
+        return is_passed
