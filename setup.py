@@ -7,12 +7,12 @@ requires = [
     "alipay-sdk-python>=3.3.398",
     "pendulum>=2.1.2",
     "requests>=2.25.1",
-    "pycryptodome>=3.9.9",
+    "pycrypto>=2.6.1",
 ]
 
 setuptools.setup(
     name="easy-pay",
-    version="0.0.2",
+    version="0.0.3",
     author="Steven Wang",
     author_email="brightstar8284@icloud.com",
     description="Easier integration with WeChat pay and Alipay.",
