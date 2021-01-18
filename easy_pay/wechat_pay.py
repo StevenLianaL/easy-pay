@@ -161,7 +161,10 @@ class WechatPay(WechatPublic):
         # get wechat pay qr_code url
         native_url = "https://api.mch.weixin.qq.com/v3/pay/transactions/native"
         r = self.request(method='POST', url=native_url, data=native_data)
-        pay_code = r.json()['code_url']
+        try:
+            pay_code = r.json()['code_url']
+        except KeyError:
+            raise KeyError(f"{r.json()=}")
 
         # build qr_code image
         img = qrcode.make(pay_code)
