@@ -8,12 +8,13 @@ requires = [
     "pendulum>=2.1.2",
     "requests>=2.25.1",
     "pycryptodome==3.9.9",
-    "qrcode>=6.1"
+    "qrcode>=6.1",
+    "cryptography>=3.3.1"
 ]
 
 setuptools.setup(
     name="easy-pay",
-    version="0.0.5",
+    version="0.0.6",
     author="Steven Wang",
     author_email="brightstar8284@icloud.com",
     description="Easier integration with WeChat pay and Alipay.",

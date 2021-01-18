@@ -1,3 +1,4 @@
+import base64
 import hashlib
 import json
 import secrets
@@ -13,6 +14,7 @@ import requests
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from easy_pay.settings import wechat_domain, time_zone, order_time_expire
 
@@ -25,6 +27,8 @@ class WechatBase:
     private_key: str
     mch_id: str
     serial_no: str  # 商户 api 证书
+
+    v3_api_key: str
 
     nonce_str: str = ''
     timestamp: str = ''
@@ -205,3 +209,14 @@ class WechatPay(WechatPublic):
         url = f"https://api.mch.weixin.qq.com/v3/pay/transactions/id/{transaction_id}?mchid={self.mch_id}"
         r = self.request(method='GET', url=url)
         return r.json()
+
+    def decode_notice(self, resource: dict):
+        """Decrypt WeChat notification data."""
+        key_bytes = str.encode(self.v3_api_key)
+        nonce_bytes = str.encode(resource['nonce'])
+        ad_bytes = str.encode(resource['associated_data'])
+        data = base64.b64decode(resource['ciphertext'])
+
+        aes_gcm = AESGCM(key_bytes)
+        r = json.loads(aes_gcm.decrypt(nonce_bytes, data, ad_bytes).decode(encoding='utf8'))
+        return r
