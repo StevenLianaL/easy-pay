@@ -2,3 +2,4 @@ alipay-sdk-python==3.3.398
 pendulum==2.1.2
 requests==2.25.1
 pycryptodome==3.9.9
+qrcode==6.1
