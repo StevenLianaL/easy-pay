@@ -147,7 +147,7 @@ class WechatPublic(WechatBase):
             "package": f"prepay_id={prepay_id}",
             "signType": "RSA",
         }
-        pay_sign = self.generate_wx_sign(base_data, self.app_secret)
+        pay_sign = self.generate_wx_sign(base_data, self.private_key)
         base_data['paySign'] = pay_sign
         return base_data
 
