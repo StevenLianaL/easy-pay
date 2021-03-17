@@ -33,6 +33,12 @@ class WechatBase:
     nonce_str: str = ''
     timestamp: str = ''
 
+    def __post_init__(self):
+        self.reset_nonce_str()
+
+    def reset_nonce_str(self):
+        self.nonce_str = secrets.token_hex(10)
+
     def request(self, method: str, url: str, data: Optional[dict] = None, params: Optional[dict] = None):
         url_path = url.replace(wechat_domain, '')
         if data:
@@ -76,7 +82,6 @@ class WechatBase:
         :param body: object
         """
         current = pendulum.now('utc').int_timestamp
-        self.nonce_str = secrets.token_hex(10)
         self.timestamp = str(current)
         sign_list = [method, url, self.timestamp, self.nonce_str, body]
         return '\n'.join(sign_list) + '\n'
@@ -137,13 +142,13 @@ class WechatPublic(WechatBase):
         open_id = res_data.get('openid')
         return open_id
 
-    def build_jsapi_invoke_data(self, nonce_str: str, prepay_id: str):
+    def build_jsapi_invoke_data(self, prepay_id: str):
         """Build the front-end to call up jsapi payment request data."""
         now = pendulum.now(tz=time_zone)
         base_data = {
             "appId": self.app_id,
             "timeStamp": str(now.int_timestamp),
-            "nonceStr": nonce_str,
+            "nonceStr": self.nonce_str,
             "package": f"prepay_id={prepay_id}",
         }
         pay_sign = self.generate_wx_sign(base_data, self.v3_api_key)
