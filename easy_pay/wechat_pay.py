@@ -115,6 +115,17 @@ class WechatPublic(WechatBase):
         sign = m.hexdigest().upper()
         return sign
 
+    def get_code_url(self, url: str):
+        """for openid, redirect url."""
+        # url = '/'.join([i for i in url.split('_') if i])
+        base = "https://open.weixin.qq.com/connect/oauth2/authorize?"
+        redirect_uri = url
+        data = (f"appid={self.app_id}", f"redirect_uri={redirect_uri}",
+                "response_type=code", "scope=snsapi_base", "state=visit")
+        suffix = '&'.join(data) + "#wechat_redirect"
+        url = f"{base}{suffix}"
+        return url
+
     def request_wx_openid(self, code: str):
         base = "https://api.weixin.qq.com/sns/oauth2/access_token"
         data = (f"appid={self.app_id}", f"secret={self.app_secret}",
