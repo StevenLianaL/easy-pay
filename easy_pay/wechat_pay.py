@@ -146,7 +146,7 @@ class WechatPublic(WechatBase):
             "nonceStr": nonce_str,
             "package": f"prepay_id={prepay_id}",
         }
-        pay_sign = self.generate_wx_sign(base_data, self.app_secret)
+        pay_sign = self.generate_wx_sign(base_data, self.v3_api_key)
         base_data['signType'] = 'RSA'
         base_data['paySign'] = pay_sign
         return base_data
