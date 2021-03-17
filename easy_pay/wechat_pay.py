@@ -131,7 +131,7 @@ class WechatPublic(WechatBase):
         now = pendulum.now(tz=time_zone)
         base_data = {
             "appId": self.app_id,
-            "timeStamp": str(now.int_timestamp()),
+            "timeStamp": str(now.int_timestamp),
             "nonceStr": nonce_str,
             "package": f"prepay_id={prepay_id}",
             "signType": "RSA",
