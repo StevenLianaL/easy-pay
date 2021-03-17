@@ -1,9 +1,9 @@
 import base64
-import hashlib
 import json
 import secrets
 import time
 from base64 import b64encode
+from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -107,17 +107,18 @@ class WechatBase:
 class WechatPublic(WechatBase):
     """公众号平台工具"""
 
-    @staticmethod
-    def generate_wx_sign(d: dict, key: str) -> str:
+    def gen_jsapi_sign(self, d: OrderedDict) -> str:
         """
         @param d: all request params without sign
         @param key: wechat key
         @return: sign
         """
-        raw_sign = '&'.join(sorted([f"{k}={v}" for k, v in d.items()])) + f'&key={key}'
-        m = hashlib.md5()
-        m.update(raw_sign.encode(encoding='utf8'))
-        sign = m.hexdigest().upper()
+        sign_list = [i for i in d.values()]
+        sign_str = '\n'.join(sign_list) + '\n'
+        rsa_key = RSA.importKey(self.private_key)
+        signer = pkcs1_15.new(rsa_key)
+        digest = SHA256.new(sign_str.encode('utf8'))
+        sign = b64encode(signer.sign(digest)).decode('utf8')
         return sign
 
     def get_code_url(self, url: str):
@@ -145,13 +146,13 @@ class WechatPublic(WechatBase):
     def build_jsapi_invoke_data(self, prepay_id: str):
         """Build the front-end to call up jsapi payment request data."""
         now = pendulum.now(tz=time_zone)
-        base_data = {
+        base_data = OrderedDict({
             "appId": self.app_id,
             "timeStamp": str(now.int_timestamp),
             "nonceStr": self.nonce_str,
             "package": f"prepay_id={prepay_id}",
-        }
-        pay_sign = self.generate_wx_sign(base_data, self.v3_api_key)
+        })
+        pay_sign = self.gen_jsapi_sign(base_data)
         base_data['signType'] = 'RSA'
         base_data['paySign'] = pay_sign
         return base_data

@@ -14,7 +14,7 @@ requires = [
 
 setuptools.setup(
     name="easy-pay",
-    version="0.1.3",
+    version="0.1.4",
     author="Steven Wang",
     author_email="brightstar8284@icloud.com",
     description="Easier integration with WeChat pay and Alipay.",
